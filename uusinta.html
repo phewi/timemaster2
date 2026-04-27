@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="fi">
+<head>
+    <meta charset="UTF-8">
+    <title>TimeMaster2 - Uusintanuoli</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@700&family=Atkinson+Hyperlegible+Mono:wght@700&display=swap" rel="stylesheet">
+    
+    <style>
+        body, html {
+            margin: 0; padding: 0;
+            height: 100%; width: 100%;
+            font-family: 'Atkinson Hyperlegible', sans-serif;
+            font-weight: 700;
+            overflow: hidden;
+            background-color: #b30000;
+            color: white;
+            display: flex;
+            flex-direction: column;
+            transition: background-color 0.3s ease;
+        }
+
+        .mode-red { background-color: #b30000; }
+        .mode-yellow { background-color: #d4af37; }
+        .mode-green { background-color: #1b5e20; }
+
+        .mono-display { font-family: 'Atkinson Hyperlegible Mono', monospace; }
+
+        section {
+            display: flex;
+            align-items: center;
+            width: 100%;
+            box-sizing: border-box;
+            position: relative;
+        }
+
+        #top-section { height: 25%; justify-content: center; font-size: 15vh; }
+        #mid-section { height: 50%; justify-content: center; font-size: 64vh; line-height: 0.75; z-index: 1; white-space: nowrap; transition: height 0.3s ease; }
+        #bottom-section { height: 25%; justify-content: center; font-size: 22vh; transition: opacity 0.3s ease; }
+
+        .shooting-mode #mid-section { height: 75%; font-size: 85vh; }
+        .shooting-mode #bottom-section { display: none; }
+
+        #round-indicator { text-align: center; font-size: 15vh; }
+
+        #bottom-trigger { position: absolute; bottom: 0; width: 100%; height: 40px; z-index: 999; }
+        .bottom-bar {
+            position: absolute; bottom: 0; width: 100%; height: 80px;
+            background: rgba(0,0,0,0.97); display: flex; align-items: center;
+            justify-content: center; z-index: 1000; font-size: 1.2rem; transform: translateY(100%); 
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1); gap: 20px;
+        }
+        #bottom-trigger:hover + .bottom-bar, .bottom-bar:hover, .bottom-bar.pinned { transform: translateY(0); }
+        
+        input[type="number"] { font-family: inherit; font-size: 1.2rem; padding: 8px; border-radius: 6px; width: 100px; border: none; margin-left: 10px; }
+        
+        /* Sulje-nappi */
+        .close-btn { background: #d32f2f; color: white; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer; font-weight: 700; font-size: 1rem; }
+    </style>
+</head>
+<body class="mode-red">
+
+    <section id="top-section">
+        <div id="round-indicator" class="mono-display">Uusintanuoli</div>
+    </section>
+
+    <section id="mid-section" class="mono-display">ABCD</section>
+
+    <section id="bottom-section" class="mono-display">00:00:00</section>
+
+    <div id="bottom-trigger"></div>
+    <div class="bottom-bar" id="bottom-bar">
+        <span>Aika (s):</span>
+        <input type="number" id="time-input" value="40" onchange="saveSettings()">
+        <button class="close-btn" onclick="window.close()">Sulje</button>
+    </div>
+
+    <audio id="beep-sound" src="beep.mp3"></audio>
+
+    <script>
+        let timeLeft = 0, timerInterval = null, currentStep = 'IDLE';
+        const beepSound = document.getElementById('beep-sound');
+
+        setInterval(() => {
+            if (currentStep === 'IDLE') {
+                const now = new Date();
+                document.getElementById('bottom-section').innerText = now.toTimeString().split(' ')[0];
+            }
+        }, 200);
+
+        function saveSettings() {
+            localStorage.setItem('tm2_uusinta_time', document.getElementById('time-input').value);
+        }
+
+        function loadSettings() {
+            const savedTime = localStorage.getItem('tm2_uusinta_time');
+            if (savedTime) document.getElementById('time-input').value = savedTime;
+        }
+
+        function updateLayoutClasses() {
+            if (currentStep !== 'IDLE') document.body.classList.add('shooting-mode');
+            else document.body.classList.remove('shooting-mode');
+        }
+
+        function updateDisplay() {
+            updateLayoutClasses();
+            const midText = document.getElementById('mid-section');
+            midText.innerText = (currentStep === 'IDLE') ? "ABCD" : timeLeft.toString();
+        }
+
+        async function handleNext() {
+            if (currentStep === 'IDLE') startPrep();
+            else if (currentStep === 'PREP') startShooting();
+            else finishRound();
+        }
+
+        async function startPrep() {
+            clearInterval(timerInterval);
+            currentStep = 'PREP';
+            document.body.className = 'mode-red';
+            timeLeft = 10; updateDisplay(); playBeeps(2);
+            timerInterval = setInterval(() => { timeLeft--; if (timeLeft <= 0) startShooting(); updateDisplay(); }, 1000);
+        }
+
+        async function startShooting() {
+            clearInterval(timerInterval);
+            currentStep = 'SHOOT';
+            document.body.className = 'mode-green';
+            timeLeft = parseInt(document.getElementById('time-input').value) || 40;
+            updateDisplay(); playBeeps(1);
+            timerInterval = setInterval(() => { timeLeft--; if (timeLeft <= 0) finishRound(); updateDisplay(); }, 1000);
+        }
+
+        function finishRound() {
+            clearInterval(timerInterval);
+            currentStep = 'IDLE';
+            document.body.className = 'mode-red';
+            playBeeps(3);
+            updateDisplay();
+        }
+
+        async function playBeeps(c) {
+            for(let i=0; i<c; i++){ beepSound.currentTime=0; beepSound.play(); await new Promise(r=>setTimeout(r, 600)); }
+        }
+
+        window.addEventListener('keydown', e => { if(e.key === 'Enter') handleNext(); });
+
+        loadSettings();
+        updateDisplay();
+    </script>
+</body>
+</html>
