@@ -354,8 +354,11 @@
     <div id="first-time-modal" class="modal-overlay" style="display: none;">
         <div class="modal-content">
             <div class="modal-heading">Timemaster2</div>
-                <div class="modal-text">
-                Pika-näppäimet:<br>
+            <div class="modal-text">
+                Vie hiiri alareunaan niin näet asetukset tai käytä pikanäppäimiä
+            </div>    
+            <div class="modal-text">
+                Pikanäppäimet:<br>
                 <span class="key">A</span> - Asetukset<br>
                 <span class="key">S</span> - Musiikki<br>
                 <span class="key">K</span> - Kello<br>
@@ -655,6 +658,20 @@
             const settingsBtn = document.querySelector('button[onclick="toggleSettings()"]');
             if (panel.style.display === 'flex' && !panel.contains(event.target) && event.target !== settingsBtn) {
                 panel.style.display = 'none';
+            }
+        });
+
+        window.addEventListener('message', (event) => {
+            if (event.data.action === 'stopMusic') {
+                if (!musicPlayer.paused) musicPlayer.pause();
+                updateMusicButton();
+                renderPlaylist();
+            } else if (event.data.action === 'resumeMusic') {
+                setTimeout(() => {
+                    if (musicToggleOn && musicFiles.length > 0) {
+                        nextSong();
+                    }
+                }, 4000);
             }
         });
     </script>

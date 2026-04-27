@@ -123,6 +123,7 @@
         }
 
         async function startPrep() {
+            if (window.opener) window.opener.postMessage({action: 'stopMusic'}, '*');
             clearInterval(timerInterval);
             currentStep = 'PREP';
             document.body.className = 'mode-red';
@@ -140,6 +141,7 @@
         }
 
         function finishRound() {
+            if (window.opener) window.opener.postMessage({action: 'resumeMusic'}, '*');
             clearInterval(timerInterval);
             currentStep = 'IDLE';
             document.body.className = 'mode-red';
