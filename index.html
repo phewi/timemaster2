@@ -209,6 +209,11 @@
             background: #111;
         }
 
+        button:disabled {
+            color: grey;
+            cursor: not-allowed;
+        }
+
         #settings-panel {
             position: absolute;
             right: 15px;
@@ -266,20 +271,22 @@
                 </select>
             </div>
             <div class="bottom-bar-group">
-                <button onclick="toggleClockHidden()">⏲  Kello</button>
-                <button onclick="openReplay()">⟳ Uusintanuoli</button>
+
+                <button onclick="openReplay()" style="background: yellow; color: black;">⟳ Uusintanuoli</button>
+                
             </div>
+            
         </div>
 
         <div class="bottom-bar-right">
-            <button onclick="toggleSettings()" style="background:none; font-size:1.8rem;">♪</button>
+                            <button onclick="toggleClockHidden()">⏲ Kello</button>
+                <button onclick="togglePlayPause()">♪ Musiikki päälle/pois</button>
+            <button onclick="toggleSettings()">≡ Soittolista</button>
             <button id="pin-btn" onclick="togglePin()">📌</button>
         </div>
     </div>
 
     <div id="settings-panel">
-        <button onclick="togglePlayPause()"
-            style="background:#007bff; width:100%; padding:10px; margin-bottom:15px;">Play / Stop (S)</button>
         <input type="range" id="volume-slider" min="0" max="1" step="0.05" value="0.5" oninput="updateVolume()"
             style="width:100%; margin-bottom:15px;">
         <div style="display:flex; gap:10px;">
@@ -348,6 +355,7 @@
             updateVolume();
             updateDisplay();
             resetToIdle();
+            updateMusicButton();
         }
 
         function updateDisplay() {
@@ -370,6 +378,10 @@
                 topText.innerText = (mode === 'AB_CD') ? (currentStep.includes('P1') ? (isOrderSwapped ? "CD" : "AB") : (isOrderSwapped ? "AB" : "CD")) : (mode === 'ABC' ? "ABC" : (mode === 'AB' ? "AB" : (currentStep.includes('P1') ? (isOrderSwapped ? "B" : "A") : (isOrderSwapped ? "A" : "B"))));
             }
             setTimeout(fitText, 0);
+
+            // Update button states
+            const toggleOrderBtn = document.querySelector('button[onclick="toggleOrder()"]');
+            toggleOrderBtn.disabled = !(mode === 'A_B' || mode === 'AB_CD');
         }
 
         function updateClock() {
@@ -446,6 +458,15 @@
             }, 4000);
         }
 
+        function updateMusicButton() {
+            const btn = document.querySelector('button[onclick="togglePlayPause()"]');
+            if (musicPlayer.paused) {
+                btn.innerText = '▶️ Musiikki';
+            } else {
+                btn.innerText = '⏹️ Musiikki';
+            }
+        }
+
         function togglePlayPause() {
             if (currentStep !== 'IDLE') return;
             if (!musicPlayer.paused) {
@@ -457,6 +478,7 @@
             }
             saveAllSettings();
             renderPlaylist();
+            updateMusicButton();
         }
 
         function playTrack(idx) {
@@ -467,6 +489,7 @@
             musicPlayer.play();
             saveAllSettings();
             renderPlaylist();
+            updateMusicButton();
         }
 
         function nextSong() {
