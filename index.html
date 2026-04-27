@@ -1,17 +1,23 @@
 <!DOCTYPE html>
 <html lang="fi">
+
 <head>
     <meta charset="UTF-8">
     <title>TimeMaster2</title>
     <link rel="icon" href="favicon.ico" type="image/x-icon">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@700&family=Atkinson+Hyperlegible+Mono:wght@700&display=swap" rel="stylesheet">
-    
+    <link
+        href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@700&family=Atkinson+Hyperlegible+Mono:wght@700&display=swap"
+        rel="stylesheet">
+
     <style>
-        body, html {
-            margin: 0; padding: 0;
-            height: 100%; width: 100%;
+        body,
+        html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            width: 100%;
             font-family: 'Atkinson Hyperlegible', sans-serif;
             font-weight: 700;
             overflow: hidden;
@@ -22,11 +28,21 @@
             transition: background-color 0.3s ease;
         }
 
-        .mode-red { background-color: #B30000; }
-        .mode-yellow { background-color: #DAA520; }
-        .mode-green { background-color: #008000; }
+        .mode-red {
+            background-color: #B30000;
+        }
 
-        .mono-display { font-family: 'Atkinson Hyperlegible Mono', monospace; }
+        .mode-yellow {
+            background-color: #DAA520;
+        }
+
+        .mode-green {
+            background-color: #008000;
+        }
+
+        .mono-display {
+            font-family: 'Atkinson Hyperlegible Mono', monospace;
+        }
 
         section {
             display: flex;
@@ -35,25 +51,25 @@
             box-sizing: border-box;
         }
 
-        #top-section { 
+        #top-section {
             position: absolute;
             top: 0;
             left: 0;
-            height: 25%; 
-            justify-content: center; 
-            font-size: 30vh; 
+            height: 25%;
+            justify-content: center;
+            font-size: 30vh;
             z-index: 10;
         }
 
-        #mid-section { 
+        #mid-section {
             position: absolute;
             top: 0;
             left: 0;
-            height: 100%; 
+            height: 100%;
             width: 100%;
-            justify-content: center; 
-            z-index: 1; 
-            white-space: nowrap; 
+            justify-content: center;
+            z-index: 1;
+            white-space: nowrap;
             display: flex;
             align-items: center;
             padding: 0 5vw;
@@ -73,26 +89,27 @@
             display: inline-block;
         }
 
-        #bottom-section { 
+        #bottom-section {
             position: absolute;
             bottom: 0;
             left: 0;
-            height: 25%; 
-            justify-content: center; 
-            font-size: 22vh; 
+            height: 25%;
+            justify-content: center;
+            font-size: 22vh;
             z-index: 5;
-            transition: opacity 0.3s ease; 
+            transition: opacity 0.3s ease;
         }
 
-        .shooting-mode #bottom-section, .clock-hidden #bottom-section { 
-            opacity: 0; 
-            pointer-events: none; 
+        .shooting-mode #bottom-section,
+        .clock-hidden #bottom-section {
+            opacity: 0;
+            pointer-events: none;
         }
 
-        #round-container { 
-            position: absolute; 
-            left: 40px; 
-            top: 50%; 
+        #round-container {
+            position: absolute;
+            left: 40px;
+            top: 50%;
             transform: translateY(-50%);
             display: flex;
             flex-direction: row;
@@ -101,38 +118,113 @@
             z-index: 101;
         }
 
-        #round-controls { 
-            display: flex; gap: 15px; opacity: 0; transition: 0.2s; margin-top: -10px; 
-        }
-        #round-container:hover #round-controls { opacity: 1; }
-        
-        .round-btn { 
-            background: rgba(255,255,255,0.3); border: none; color: white; 
-            width: 60px; height: 60px; border-radius: 50%; cursor: pointer; 
-            font-size: 2.5rem; display: flex; align-items: center; justify-content: center;
+        #round-controls {
+            display: flex;
+            gap: 15px;
+            opacity: 0;
+            transition: 0.2s;
+            margin-top: -10px;
         }
 
-        #bottom-trigger { position: absolute; bottom: 0; width: 100%; height: 40px; z-index: 999; }
+        #round-container:hover #round-controls {
+            opacity: 1;
+        }
+
+        .round-btn {
+            background: rgba(255, 255, 255, 0.3);
+            border: none;
+            color: white;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 2.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        #bottom-trigger {
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            height: 40px;
+            z-index: 999;
+        }
+
         .bottom-bar {
-            position: absolute; bottom: 0; width: 100%; height: 80px;
-            background: rgba(0,0,0,0.97); display: flex; align-items: center;
-            justify-content: space-between; padding: 0 30px; box-sizing: border-box;
-            z-index: 1000; font-size: 1rem; transform: translateY(100%); 
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            height: 80px;
+            background: rgba(0, 0, 0, 0.97);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 30px;
+            box-sizing: border-box;
+            z-index: 1000;
+            font-size: 1rem;
+            transform: translateY(100%);
             transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
-        #bottom-trigger:hover + .bottom-bar, .bottom-bar:hover, .bottom-bar.pinned { transform: translateY(0); }
-        
-        select, button { font-family: inherit; font-size: 1rem; padding: 8px; border-radius: 6px; }
-        button { cursor: pointer; background: #333; color: white; border: none; font-weight: 700; }
-        #pin-btn.active { color: #007bff; background: #111; }
+
+        .bottom-bar-left,
+        .bottom-bar-right {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .bottom-bar-group {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        #bottom-trigger:hover+.bottom-bar,
+        .bottom-bar:hover,
+        .bottom-bar.pinned {
+            transform: translateY(0);
+        }
+
+        select,
+        button {
+            font-family: inherit;
+            font-size: 1rem;
+            padding: 8px;
+            border-radius: 6px;
+        }
+
+        button {
+            cursor: pointer;
+            background: #333;
+            color: white;
+            border: none;
+            font-weight: 700;
+        }
+
+        #pin-btn.active {
+            color: #007bff;
+            background: #111;
+        }
 
         #settings-panel {
-            position: absolute; right: 15px; bottom: 90px; width: 350px;
-            background: rgba(20,20,20,0.98); border: 1px solid #444; border-radius: 15px;
-            display: none; flex-direction: column; padding: 20px; z-index: 1001;
+            position: absolute;
+            right: 15px;
+            bottom: 90px;
+            width: 350px;
+            background: rgba(20, 20, 20, 0.98);
+            border: 1px solid #444;
+            border-radius: 15px;
+            display: none;
+            flex-direction: column;
+            padding: 20px;
+            z-index: 1001;
         }
     </style>
 </head>
+
 <body class="mode-red">
 
     <section id="top-section">
@@ -154,8 +246,8 @@
 
     <div id="bottom-trigger"></div>
     <div class="bottom-bar" id="bottom-bar">
-        <div style="display:flex; gap:25px; align-items:center;">
-            <div style="display:flex; align-items:center; gap:8px;">
+        <div class="bottom-bar-left">
+            <div class="bottom-bar-group">
                 <span>Järjestys:</span>
                 <select id="mode-select" onchange="saveAllSettings(); resetToIdle();">
                     <option value="AB">AB</option>
@@ -163,34 +255,39 @@
                     <option value="A_B">A B</option>
                     <option value="AB_CD">AB CD</option>
                 </select>
-                <button onclick="toggleOrder()">⇄</button>
+                <button onclick="toggleOrder()">⇄ Vaihda vuoroa</button>
             </div>
-            <div style="display:flex; align-items:center; gap:8px;">
-                <span>Aika:</span>
+            <div class="bottom-bar-group">
+                <span>Ammunta-aika:</span>
                 <select id="time-select" onchange="saveAllSettings()">
-                    <option value="20">20s</option>
-                    <option value="120">120s</option>
-                    <option value="180">180s</option>
+                    <option value="120" selected>120s</option>
+                    <option value="180">180s</option>   
                     <option value="240">240s</option>
                 </select>
             </div>
-            <span>U: Uusinta | K: Kello pois</span>
+            <div class="bottom-bar-group">
+                <button onclick="toggleClockHidden()">⏲  Kello</button>
+                <button onclick="openReplay()">⟳ Uusintanuoli</button>
+            </div>
         </div>
 
-        <div style="display:flex; gap:20px; align-items:center;">
+        <div class="bottom-bar-right">
             <button onclick="toggleSettings()" style="background:none; font-size:1.8rem;">♪</button>
             <button id="pin-btn" onclick="togglePin()">📌</button>
         </div>
     </div>
 
     <div id="settings-panel">
-        <button onclick="togglePlayPause()" style="background:#007bff; width:100%; padding:10px; margin-bottom:15px;">Play / Stop (S)</button>
-        <input type="range" id="volume-slider" min="0" max="1" step="0.05" value="0.5" oninput="updateVolume()" style="width:100%; margin-bottom:15px;">
+        <button onclick="togglePlayPause()"
+            style="background:#007bff; width:100%; padding:10px; margin-bottom:15px;">Play / Stop (S)</button>
+        <input type="range" id="volume-slider" min="0" max="1" step="0.05" value="0.5" oninput="updateVolume()"
+            style="width:100%; margin-bottom:15px;">
         <div style="display:flex; gap:10px;">
             <button onclick="shufflePlaylist()" style="flex:1;">🔀 Shuffle</button>
             <button onclick="fetchMusicList()" style="flex:1;">Päivitä</button>
         </div>
-        <div id="playlist-list" style="max-height:220px; overflow-y:auto; margin-top:15px; border-top:1px solid #444;"></div>
+        <div id="playlist-list" style="max-height:220px; overflow-y:auto; margin-top:15px; border-top:1px solid #444;">
+        </div>
     </div>
 
     <audio id="beep-sound" src="beep.mp3"></audio>
@@ -198,9 +295,9 @@
 
     <script>
         let timeLeft = 0, timerInterval = null, roundNum = 1, currentStep = 'IDLE';
-        let isOrderSwapped = false, isPinned = false, isClockHidden = false;
+        let isOrderSwapped = false, isPinned = false, isClockHidden = true;
         let musicFiles = [], currentTrackIdx = 0;
-        let isMusicPlayingBeforePrep = false;
+        let isMusicPlayingBeforePrep = false, musicToggleOn = false;
 
         const musicPlayer = document.getElementById('bg-music');
         const beepSound = document.getElementById('beep-sound');
@@ -215,7 +312,7 @@
             else if (isClockHidden) maxHFactor = 0.9;
             const maxHeight = window.innerHeight * maxHFactor;
             const maxWidth = window.innerWidth * 0.9;
-            text.style.fontSize = '100px'; 
+            text.style.fontSize = '100px';
             const optimalSize = 100 * Math.min(maxWidth / text.offsetWidth, maxHeight / text.offsetHeight);
             text.style.fontSize = Math.floor(optimalSize) + 'px';
         }
@@ -231,22 +328,25 @@
                 vol: document.getElementById('volume-slider').value,
                 swapped: isOrderSwapped,
                 clockHidden: isClockHidden,
-                musicOrder: musicFiles
+                musicOrder: musicFiles,
+                musicToggleOn: musicToggleOn
             }));
         }
 
         function loadSettings() {
             const s = JSON.parse(localStorage.getItem('tm2_final_config') || '{}');
             if (s.mode) document.getElementById('mode-select').value = s.mode;
-            if (s.time) document.getElementById('time-select').value = s.time;
+            document.getElementById('time-select').value = s.time || '120';
             if (s.pin) { isPinned = true; document.getElementById('bottom-bar').classList.add('pinned'); document.getElementById('pin-btn').classList.add('active'); }
-            if (s.clockHidden !== undefined) { isClockHidden = s.clockHidden; updateDisplay(); }
+            if (s.clockHidden !== undefined) { isClockHidden = s.clockHidden; }
             if (s.musicOrder) musicFiles = s.musicOrder;
+            if (s.musicToggleOn !== undefined) musicToggleOn = s.musicToggleOn;
             roundNum = s.round || 1;
             isOrderSwapped = s.swapped || false;
             document.getElementById('round-indicator').innerText = roundNum;
             document.getElementById('volume-slider').value = s.vol || 0.5;
             updateVolume();
+            updateDisplay();
             resetToIdle();
         }
 
@@ -254,14 +354,14 @@
             const mode = document.getElementById('mode-select').value;
             const topText = document.getElementById('shooter-info');
             const midText = document.getElementById('mid-text-content');
-            
+
             document.body.classList.remove('shooting-mode', 'clock-hidden', 'shooting-active');
             if (currentStep !== 'IDLE') {
                 document.body.classList.add('shooting-mode', 'shooting-active');
             } else if (isClockHidden) {
                 document.body.classList.add('clock-hidden');
             }
-            
+
             if (currentStep === 'IDLE') {
                 topText.innerText = "";
                 midText.innerText = (mode === 'AB_CD') ? (isOrderSwapped ? "CDAB" : "ABCD") : (mode === 'ABC' ? "ABC" : (mode === 'AB' ? "AB" : (isOrderSwapped ? "B A" : "A B")));
@@ -269,7 +369,16 @@
                 midText.innerText = timeLeft.toString();
                 topText.innerText = (mode === 'AB_CD') ? (currentStep.includes('P1') ? (isOrderSwapped ? "CD" : "AB") : (isOrderSwapped ? "AB" : "CD")) : (mode === 'ABC' ? "ABC" : (mode === 'AB' ? "AB" : (currentStep.includes('P1') ? (isOrderSwapped ? "B" : "A") : (isOrderSwapped ? "A" : "B"))));
             }
-            setTimeout(fitText, 0); 
+            setTimeout(fitText, 0);
+        }
+
+        function updateClock() {
+            const clockElement = document.getElementById('bottom-section');
+            const now = new Date();
+            const hours = String(now.getHours()).padStart(2, '0');
+            const minutes = String(now.getMinutes()).padStart(2, '0');
+            const seconds = String(now.getSeconds()).padStart(2, '0');
+            clockElement.innerText = `${hours}:${minutes}:${seconds}`;
         }
 
         function shufflePlaylist() {
@@ -292,7 +401,7 @@
 
         async function startPrep(p) {
             clearInterval(timerInterval);
-            isMusicPlayingBeforePrep = !musicPlayer.paused;
+            isMusicPlayingBeforePrep = musicToggleOn && !musicPlayer.paused;
             if (!musicPlayer.paused) musicPlayer.pause();
             currentStep = p === 1 ? 'P1_PREP' : 'P2_PREP';
             document.body.className = 'mode-red';
@@ -305,7 +414,7 @@
             currentStep = p === 1 ? 'P1_SHOOT' : 'P2_SHOOT';
             document.body.className = 'mode-green';
             timeLeft = parseInt(document.getElementById('time-select').value);
-            updateDisplay(); 
+            updateDisplay();
             playBeeps(1);
             timerInterval = setInterval(() => {
                 timeLeft--;
@@ -325,32 +434,38 @@
             document.body.className = 'mode-red';
             playBeeps(3);
             changeRound(1);
-            if (document.getElementById('mode-select').value === 'AB_CD') isOrderSwapped = !isOrderSwapped;
+            const mode = document.getElementById('mode-select').value;
+            if (mode === 'AB_CD' || mode === 'A_B') isOrderSwapped = !isOrderSwapped;
             updateDisplay();
             saveAllSettings();
-            
-            // Tässä muutettu logiikka:
-            setTimeout(() => { 
-                if (isMusicPlayingBeforePrep && musicFiles.length > 0) {
-                    musicPlayer.play();
-                } 
-            }, 3000);
+
+            setTimeout(() => {
+                if (musicToggleOn && musicFiles.length > 0) {
+                    nextSong();
+                }
+            }, 4000);
         }
 
         function togglePlayPause() {
             if (currentStep !== 'IDLE') return;
             if (!musicPlayer.paused) {
                 musicPlayer.pause();
+                musicToggleOn = false;
             } else {
+                musicToggleOn = true;
                 nextSong();
             }
+            saveAllSettings();
             renderPlaylist();
         }
 
         function playTrack(idx) {
+            if (currentStep !== 'IDLE') return;
             currentTrackIdx = idx;
             musicPlayer.src = 'musiikki/' + encodeURIComponent(musicFiles[currentTrackIdx]);
+            musicToggleOn = true;
             musicPlayer.play();
+            saveAllSettings();
             renderPlaylist();
         }
 
@@ -366,13 +481,13 @@
                 const r = await fetch('/api/music');
                 musicFiles = await r.json();
                 renderPlaylist();
-            } catch(e) {
+            } catch (e) {
                 // Fall back to static JSON (for GitHub Pages)
                 try {
                     const r = await fetch('api/music.json');
                     musicFiles = await r.json();
                     renderPlaylist();
-                } catch(e2) {}
+                } catch (e2) { }
             }
         }
 
@@ -383,7 +498,7 @@
                 d.innerText = (i + 1) + ". " + f;
                 d.style.padding = '8px'; d.style.cursor = 'pointer';
                 d.style.color = (i === currentTrackIdx && !musicPlayer.paused) ? '#00ff00' : 'white';
-                d.onclick = () => { if(currentStep === 'IDLE') playTrack(i); };
+                d.onclick = () => { if (currentStep === 'IDLE') playTrack(i); };
                 l.appendChild(d);
             });
         }
@@ -391,31 +506,39 @@
         function updateVolume() { musicPlayer.volume = document.getElementById('volume-slider').value; }
         function toggleOrder() { isOrderSwapped = !isOrderSwapped; updateDisplay(); saveAllSettings(); }
         function togglePin() { isPinned = !isPinned; document.getElementById('bottom-bar').classList.toggle('pinned', isPinned); document.getElementById('pin-btn').classList.toggle('active', isPinned); saveAllSettings(); }
-        function toggleSettings() { const p = document.getElementById('settings-panel'); p.style.display = (p.style.display==='flex')?'none':'flex'; }
-        
-        function resetToIdle() { 
-            clearInterval(timerInterval); 
-            currentStep = 'IDLE'; 
-            document.body.className = 'mode-red'; 
-            if (isMusicPlayingBeforePrep && musicFiles.length > 0) musicPlayer.play();
-            updateDisplay(); 
+        function toggleSettings() { const p = document.getElementById('settings-panel'); p.style.display = (p.style.display === 'flex') ? 'none' : 'flex'; }
+
+        function toggleClockHidden() {
+            isClockHidden = !isClockHidden;
+            updateDisplay();
+            saveAllSettings();
+        }
+
+        function resetToIdle() {
+            clearInterval(timerInterval);
+            currentStep = 'IDLE';
+            document.body.className = 'mode-red';
+            if (musicToggleOn && musicFiles.length > 0) nextSong();
+            updateDisplay();
         }
 
         function changeRound(v) { roundNum = Math.max(1, roundNum + v); document.getElementById('round-indicator').innerText = roundNum; saveAllSettings(); }
-        async function playBeeps(c) { await new Promise(r=>setTimeout(r,150)); for(let i=0;i<c;i++){ beepSound.currentTime=0; beepSound.play(); await new Promise(r=>setTimeout(r,600)); } }
+        async function playBeeps(c) { await new Promise(r => setTimeout(r, 250)); for (let i = 0; i < c; i++) { beepSound.currentTime = 0; beepSound.play(); await new Promise(r => setTimeout(r, 1200)); } }
 
-        window.addEventListener('keydown', e => { 
-            if(e.key === 'Enter') handleNext(); 
-            if(e.key.toLowerCase() === 's' && currentStep === 'IDLE') togglePlayPause();
-            if(e.key.toLowerCase() === 'u') openReplay();
-            if(e.key.toLowerCase() === 'k' && currentStep === 'IDLE') {
+        window.addEventListener('keydown', e => {
+            if (e.key === 'Enter') handleNext();
+            if (e.key.toLowerCase() === 's' && currentStep === 'IDLE') togglePlayPause();
+            if (e.key.toLowerCase() === 'u') openReplay();
+            if (e.key.toLowerCase() === 'k' && currentStep === 'IDLE') {
                 isClockHidden = !isClockHidden;
                 updateDisplay();
                 saveAllSettings();
             }
         });
-        
+
         fetchMusicList();
+        updateClock();
+        setInterval(updateClock, 1000);
         loadSettings();
 
         function openReplay() {
@@ -433,4 +556,5 @@
         });
     </script>
 </body>
+
 </html>

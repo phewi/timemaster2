@@ -142,7 +142,7 @@
         }
 
         async function playBeeps(c) {
-            for(let i=0; i<c; i++){ beepSound.currentTime=0; beepSound.play(); await new Promise(r=>setTimeout(r, 600)); }
+            for(let i=0; i<c; i++){ beepSound.currentTime=0; beepSound.play(); await new Promise(r=>setTimeout(r, 700)); }
         }
 
         window.addEventListener('keydown', e => { if(e.key === 'Enter') handleNext(); });
