@@ -43,6 +43,8 @@
         .shooting-mode #mid-section { height: 75%; font-size: 85vh; }
         .shooting-mode #bottom-section { display: none; }
 
+        .clock-hidden #bottom-section { opacity: 0; pointer-events: none; }
+
         #round-indicator { text-align: center; font-size: 15vh; }
 
         #bottom-trigger { position: absolute; bottom: 0; width: 100%; height: 40px; z-index: 999; }
@@ -81,6 +83,7 @@
 
     <script>
         let timeLeft = 0, timerInterval = null, currentStep = 'IDLE';
+        let isClockHidden = false;
         const beepSound = document.getElementById('beep-sound');
 
         setInterval(() => {
@@ -97,11 +100,14 @@
         function loadSettings() {
             const savedTime = localStorage.getItem('tm2_uusinta_time');
             if (savedTime) document.getElementById('time-input').value = savedTime;
+            const s = JSON.parse(localStorage.getItem('tm2_final_config') || '{}');
+            if (s.clockHidden !== undefined) isClockHidden = s.clockHidden;
         }
 
         function updateLayoutClasses() {
+            document.body.classList.remove('shooting-mode', 'clock-hidden');
             if (currentStep !== 'IDLE') document.body.classList.add('shooting-mode');
-            else document.body.classList.remove('shooting-mode');
+            if (isClockHidden) document.body.classList.add('clock-hidden');
         }
 
         function updateDisplay() {
