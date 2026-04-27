@@ -2,6 +2,8 @@
 
 Verkkopohjainen ammunta-ajastin jousiammuntakilpailuihin. Tarjoaa selkeän, korkeakontrastisen näytön muokattavilla väreillä ja taustamusiikin tuella.
 
+Kokeile: https://phewi.github.io/timemaster2/
+ 
 ## Käyttöönotto
 
 ### Vaatimukset
@@ -22,8 +24,8 @@ Verkkopohjainen ammunta-ajastin jousiammuntakilpailuihin. Tarjoaa selkeän, kork
 
 4. **Avaa selaimessa**:
    - Mene osoitteeseen `http://localhost:8000`
-   - Avaa `index.html` pääkilpailuaikamittarille
-   - Avaa `uusinta.html` uusintanuolen ajastimelle
+   - Avaa `index.html` päänäkymä
+   - Avaa `uusinta.html` uusintanuolen ajastimelle (tai paina U päänäkymässä)
 
 ## Käyttöohjeet
 
