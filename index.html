@@ -349,7 +349,7 @@
 
         function playTrack(idx) {
             currentTrackIdx = idx;
-            musicPlayer.src = '/musiikki/' + encodeURIComponent(musicFiles[currentTrackIdx]);
+            musicPlayer.src = 'musiikki/' + encodeURIComponent(musicFiles[currentTrackIdx]);
             musicPlayer.play();
             renderPlaylist();
         }
@@ -361,7 +361,7 @@
         }
 
         async function fetchMusicList() {
-            try { const r = await fetch('/api/music'); musicFiles = await r.json(); renderPlaylist(); } catch(e){}
+            try { const r = await fetch('api/music'); musicFiles = await r.json(); renderPlaylist(); } catch(e){}
         }
 
         function renderPlaylist() {
