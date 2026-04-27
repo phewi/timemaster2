@@ -2,7 +2,7 @@
 <html lang="fi">
 <head>
     <meta charset="UTF-8">
-    <title>TimeMaster2 - Tournament Edition</title>
+    <title>TimeMaster2</title>
     <link rel="icon" href="favicon.ico" type="image/x-icon">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -361,7 +361,19 @@
         }
 
         async function fetchMusicList() {
-            try { const r = await fetch('api/music'); musicFiles = await r.json(); renderPlaylist(); } catch(e){}
+            try {
+                // Try dynamic endpoint first (for local server.py)
+                const r = await fetch('/api/music');
+                musicFiles = await r.json();
+                renderPlaylist();
+            } catch(e) {
+                // Fall back to static JSON (for GitHub Pages)
+                try {
+                    const r = await fetch('api/music.json');
+                    musicFiles = await r.json();
+                    renderPlaylist();
+                } catch(e2) {}
+            }
         }
 
         function renderPlaylist() {
