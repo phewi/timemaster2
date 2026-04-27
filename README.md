@@ -27,19 +27,21 @@ Verkkopohjainen ammunta-ajastin jousiammuntakilpailuihin. Tarjoaa selkeän, kork
 
 ## Käyttöohjeet
 
-Ohjelma on tarkoitettu näppäimistöllä halittavaksi. Tavoitteena on että ammunnanjohtajan tarvitsee painaa normaalissa toiminnassa vain yhtä nappia ammunnan aloitukseen/lopetukseen.
+Ohjelma on tarkoitettu näppäimistöllä halittavaksi. Tavoitteena on että ammunnanjohtajan tarvitsee tyypillisesti painaa vain yhtä nappia (Enter).
 
 ### Pikanäppäimet
 
 #### Pääikkuna (index.html)
 - **Enter**: Aloita ammunta tai siirry seuraavaan vaiheeseen
-- **Välilyönti (Spacebar)**: Hätäseis - pysäytä kaikki toiminta välittömästi
+- **Välilyönti (Spacebar)** tai **H**: Hätäseis - pysäytä kaikki toiminta välittömästi
 - **S**: Käynnistä/pysäytä taustamusiikki (vain odotustilassa)
 - **U**: Avaa uusintanuolen ikkuna uudessa välilehdessä
 - **K**: Piilota/näytä kello (vain odotustilassa)
+- **A**: Kiinnitä/irrota asetukset (vain odotustilassa)
 
 #### Uusintanuolen ikkuna (uusinta.html)
 - **Enter**: Aloita uusintanuolen ajoitus tai siirry seuraavaan vaiheeseen
+- **Välilyönti (Spacebar)** tai **H**: Hätäseis - pysäytä kaikki toiminta välittömästi
 
 ### Ampumistila
 - Aktivoi ampumistila kilpailun aikana
