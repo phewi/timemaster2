@@ -204,6 +204,26 @@
             font-weight: 700;
         }
 
+        #emergency-stop-btn {
+            background: #ff0000;
+            color: white;
+        }
+
+        .emergency-stop #mid-text-content {
+            font-size: 65vh !important;
+            letter-spacing: 0.02em;
+            line-height: 0.85;
+        }
+
+        .emergency-stop #mid-section {
+            align-items: center;
+        }
+
+        .emergency-stop #bottom-section {
+            opacity: 0;
+            pointer-events: none;
+        }
+
         #pin-btn.active {
             color: #007bff;
             background: #111;
@@ -332,8 +352,9 @@
         </div>
 
         <div class="bottom-bar-right">
-                            <button onclick="toggleClockHidden()">⏲ Kello</button>
-                <button onclick="togglePlayPause()">♪ Musiikki päälle/pois</button>
+            <button onclick="toggleClockHidden()">⏲ Kello</button>
+            <button id="emergency-stop-btn" onclick="toggleEmergencyStop()">⛔ STOP</button>
+            <button onclick="togglePlayPause()">♪ Musiikki päälle/pois</button>
             <button onclick="toggleSettings()">≡ Soittolista</button>
             <button id="pin-btn" onclick="togglePin()">📌</button>
         </div>
@@ -363,6 +384,7 @@
                 <span class="key">S</span> - Musiikki<br>
                 <span class="key">K</span> - Kello<br>
                 <span class="key">U</span> - Uusintanuoli<br>
+                <span class="key">H</span> / <span class="key">Välilyönti</span> - Hätäpysäytys<br>
                 <span class="key">Enter</span> - Seuraava
             </div>
             <button class="modal-close-btn" onclick="closeFirstTimeModal()">Sulje</button>
@@ -375,6 +397,7 @@
     <script>
         let timeLeft = 0, timerInterval = null, roundNum = 1, currentStep = 'IDLE';
         let isOrderSwapped = false, isPinned = false, isClockHidden = true;
+        let isEmergencyStop = false, emergencyInterval = null, emergencyPrevStep = 'IDLE';
         let musicFiles = [], currentTrackIdx = 0;
         let isMusicPlayingBeforePrep = false, musicToggleOn = false;
 
@@ -435,21 +458,42 @@
             const topText = document.getElementById('shooter-info');
             const midText = document.getElementById('mid-text-content');
 
-            document.body.classList.remove('shooting-mode', 'clock-hidden', 'shooting-active');
-            if (currentStep !== 'IDLE') {
+            document.body.classList.remove('shooting-mode', 'clock-hidden', 'shooting-active', 'emergency-stop');
+            document.body.classList.remove('mode-red', 'mode-yellow', 'mode-green');
+            if (currentStep === 'STOP') {
+                document.body.classList.add('mode-red', 'emergency-stop');
+            } else if (currentStep === 'P1_PREP' || currentStep === 'P2_PREP') {
+                document.body.classList.add('shooting-mode', 'shooting-active', 'mode-red');
+            } else if (currentStep === 'P1_SHOOT' || currentStep === 'P2_SHOOT') {
                 document.body.classList.add('shooting-mode', 'shooting-active');
+                if (timeLeft <= 20) {
+                    document.body.classList.add('mode-yellow');
+                } else {
+                    document.body.classList.add('mode-green');
+                }
             } else if (isClockHidden) {
-                document.body.classList.add('clock-hidden');
+                document.body.classList.add('mode-red', 'clock-hidden');
+            } else {
+                document.body.classList.add('mode-red');
             }
 
-            if (currentStep === 'IDLE') {
-                topText.innerText = "";
-                midText.innerText = (mode === 'AB_CD') ? (isOrderSwapped ? "CDAB" : "ABCD") : (mode === 'ABC' ? "ABC" : (mode === 'AB' ? "AB" : (isOrderSwapped ? "B A" : "A B")));
+            if (currentStep === 'STOP') {
+                topText.innerText = '';
+                midText.innerText = 'STOP';
+                midText.style.fontSize = '65vh';
+                midText.style.lineHeight = '0.85';
             } else {
-                midText.innerText = timeLeft.toString();
-                topText.innerText = (mode === 'AB_CD') ? (currentStep.includes('P1') ? (isOrderSwapped ? "CD" : "AB") : (isOrderSwapped ? "AB" : "CD")) : (mode === 'ABC' ? "ABC" : (mode === 'AB' ? "AB" : (currentStep.includes('P1') ? (isOrderSwapped ? "B" : "A") : (isOrderSwapped ? "A" : "B"))));
+                midText.style.fontSize = '';
+                midText.style.lineHeight = '';
+                if (currentStep === 'IDLE') {
+                    topText.innerText = "";
+                    midText.innerText = (mode === 'AB_CD') ? (isOrderSwapped ? "CDAB" : "ABCD") : (mode === 'ABC' ? "ABC" : (mode === 'AB' ? "AB" : (isOrderSwapped ? "B A" : "A B")));
+                } else {
+                    midText.innerText = timeLeft.toString();
+                    topText.innerText = (mode === 'AB_CD') ? (currentStep.includes('P1') ? (isOrderSwapped ? "CD" : "AB") : (isOrderSwapped ? "AB" : "CD")) : (mode === 'ABC' ? "ABC" : (mode === 'AB' ? "AB" : (currentStep.includes('P1') ? (isOrderSwapped ? "B" : "A") : (isOrderSwapped ? "A" : "B"))));
+                }
+                setTimeout(fitText, 0);
             }
-            setTimeout(fitText, 0);
 
             // Update button states
             const toggleOrderBtn = document.querySelector('button[onclick="toggleOrder()"]');
@@ -488,7 +532,6 @@
             isMusicPlayingBeforePrep = musicToggleOn && !musicPlayer.paused;
             if (!musicPlayer.paused) musicPlayer.pause();
             currentStep = p === 1 ? 'P1_PREP' : 'P2_PREP';
-            document.body.className = 'mode-red';
             timeLeft = 10; updateDisplay(); playBeeps(2);
             timerInterval = setInterval(() => { timeLeft--; if (timeLeft <= 0) startShooting(p); updateDisplay(); }, 1000);
         }
@@ -496,13 +539,11 @@
         async function startShooting(p) {
             clearInterval(timerInterval);
             currentStep = p === 1 ? 'P1_SHOOT' : 'P2_SHOOT';
-            document.body.className = 'mode-green';
             timeLeft = parseInt(document.getElementById('time-select').value);
             updateDisplay();
             playBeeps(1);
             timerInterval = setInterval(() => {
                 timeLeft--;
-                if (timeLeft === 30) document.body.className = 'mode-yellow';
                 if (timeLeft <= 0) {
                     const mode = document.getElementById('mode-select').value;
                     if (p === 1 && mode !== 'AB' && mode !== 'ABC') startPrep(2);
@@ -515,7 +556,6 @@
         function finishRound() {
             clearInterval(timerInterval);
             currentStep = 'IDLE';
-            document.body.className = 'mode-red';
             playBeeps(3);
             changeRound(1);
             const mode = document.getElementById('mode-select').value;
@@ -536,6 +576,66 @@
                 btn.innerText = '▶️ Musiikki';
             } else {
                 btn.innerText = '⏹️ Musiikki';
+            }
+        }
+
+        function toggleEmergencyStop() {
+            if (isEmergencyStop) {
+                deactivateEmergencyStop();
+            } else {
+                activateEmergencyStop();
+            }
+        }
+
+        function activateEmergencyStop() {
+            if (isEmergencyStop) return;
+            isEmergencyStop = true;
+            emergencyPrevStep = currentStep;
+            clearInterval(timerInterval);
+            currentStep = 'STOP';
+            updateDisplay();
+            beepSound.currentTime = 0;
+            beepSound.play();
+            emergencyInterval = setInterval(() => {
+                beepSound.currentTime = 0;
+                beepSound.play();
+            }, 2000);
+        }
+
+        function deactivateEmergencyStop() {
+            if (!isEmergencyStop) return;
+            isEmergencyStop = false;
+            clearInterval(emergencyInterval);
+            emergencyInterval = null;
+            currentStep = emergencyPrevStep || 'IDLE';
+            if (currentStep === 'IDLE') {
+                updateDisplay();
+            } else {
+                resumeCurrentPhase();
+            }
+        }
+
+        function resumeCurrentPhase() {
+            if (currentStep === 'P1_PREP' || currentStep === 'P2_PREP') {
+                updateDisplay();
+                timerInterval = setInterval(() => {
+                    timeLeft--;
+                    if (timeLeft <= 0) startShooting(currentStep === 'P1_PREP' ? 1 : 2);
+                    updateDisplay();
+                }, 1000);
+            } else if (currentStep === 'P1_SHOOT' || currentStep === 'P2_SHOOT') {
+                updateDisplay();
+                timerInterval = setInterval(() => {
+                    timeLeft--;
+                    if (timeLeft <= 0) {
+                        const mode = document.getElementById('mode-select').value;
+                        if (currentStep === 'P1_SHOOT' && mode !== 'AB' && mode !== 'ABC') startPrep(2);
+                        else finishRound();
+                    }
+                    updateDisplay();
+                }, 1000);
+            } else {
+                updateDisplay();
             }
         }
 
@@ -612,7 +712,6 @@
         function resetToIdle() {
             clearInterval(timerInterval);
             currentStep = 'IDLE';
-            document.body.className = 'mode-red';
             if (musicToggleOn && musicFiles.length > 0) nextSong();
             updateDisplay();
         }
@@ -621,6 +720,12 @@
         async function playBeeps(c) { await new Promise(r => setTimeout(r, 250)); for (let i = 0; i < c; i++) { beepSound.currentTime = 0; beepSound.play(); await new Promise(r => setTimeout(r, 1200)); } }
 
         window.addEventListener('keydown', e => {
+            const isEmergencyKey = e.key.toLowerCase() === 'h' || e.code === 'Space';
+            if (isEmergencyStop && !isEmergencyKey) {
+                e.preventDefault();
+                return;
+            }
+
             if (e.key === 'Enter') handleNext();
             if (e.key.toLowerCase() === 's' && currentStep === 'IDLE') togglePlayPause();
             if (e.key.toLowerCase() === 'u') openReplay();
@@ -630,6 +735,10 @@
                 saveAllSettings();
             }
             if (e.key.toLowerCase() === 'a') togglePin();
+            if (isEmergencyKey) {
+                e.preventDefault();
+                toggleEmergencyStop();
+            }
         });
 
         fetchMusicList();

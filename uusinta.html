@@ -45,6 +45,8 @@
 
         .clock-hidden #bottom-section { opacity: 0; pointer-events: none; }
 
+        .emergency-mode #mid-section { font-size: 65vh; }
+
         #round-indicator { text-align: center; font-size: 15vh; }
 
         #bottom-trigger { position: absolute; bottom: 0; width: 100%; height: 40px; z-index: 999; }
@@ -84,6 +86,9 @@
     <script>
         let timeLeft = 0, timerInterval = null, currentStep = 'IDLE';
         let isClockHidden = false;
+        let emergencyStop = false;
+        let flashInterval = null;
+        let beepInterval = null;
         const beepSound = document.getElementById('beep-sound');
 
         setInterval(() => {
@@ -105,15 +110,18 @@
         }
 
         function updateLayoutClasses() {
-            document.body.classList.remove('shooting-mode', 'clock-hidden');
+            document.body.classList.remove('shooting-mode', 'clock-hidden', 'emergency-mode');
             if (currentStep !== 'IDLE') document.body.classList.add('shooting-mode');
             if (isClockHidden) document.body.classList.add('clock-hidden');
+            if (emergencyStop) document.body.classList.add('emergency-mode');
         }
 
         function updateDisplay() {
             updateLayoutClasses();
-            const midText = document.getElementById('mid-section');
-            midText.innerText = (currentStep === 'IDLE') ? "ABCD" : timeLeft.toString();
+            if (!emergencyStop) {
+                const midText = document.getElementById('mid-section');
+                midText.innerText = (currentStep === 'IDLE') ? "ABCD" : timeLeft.toString();
+            }
         }
 
         async function handleNext() {
@@ -153,7 +161,34 @@
             for(let i=0; i<c; i++){ beepSound.currentTime=0; beepSound.play(); await new Promise(r=>setTimeout(r, 700)); }
         }
 
-        window.addEventListener('keydown', e => { if(e.key === 'Enter') handleNext(); });
+        function toggleEmergency() {
+            emergencyStop = !emergencyStop;
+            if (emergencyStop) {
+                clearInterval(timerInterval);
+                currentStep = 'EMERGENCY';
+                startEmergency();
+            } else {
+                clearInterval(flashInterval);
+                clearInterval(beepInterval);
+                currentStep = 'IDLE';
+                updateDisplay();
+            }
+        }
+
+        function startEmergency() {
+            const midText = document.getElementById('mid-section');
+            midText.innerText = 'STOP';
+            flashInterval = setInterval(() => {
+                midText.innerText = midText.innerText === 'STOP' ? '' : 'STOP';
+            }, 500);
+            beepInterval = setInterval(() => {
+                beepSound.currentTime = 0;
+                beepSound.play();
+            }, 2000);
+            updateLayoutClasses();
+        }
+
+        window.addEventListener('keydown', e => { if(e.key === 'Enter') handleNext(); if(e.key === 'h' || e.key === ' ') toggleEmergency(); });
 
         loadSettings();
         updateDisplay();
