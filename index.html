@@ -378,7 +378,9 @@
 
             <button onclick="togglePlayPause()">♪ Musiikki päälle/pois</button>
             <button onclick="toggleSettings()">≡ Soittolista</button>
+            <button onclick="showFirstTimeModal()">❓ Ohje</button>
             <button id="pin-btn" onclick="togglePin()">📌</button>
+            
         </div>
     </div>
 
@@ -801,6 +803,10 @@
         function closeFirstTimeModal() {
             document.getElementById('first-time-modal').style.display = 'none';
             localStorage.setItem('firstTimeShown', 'true');
+        }
+
+        function showFirstTimeModal() {
+            document.getElementById('first-time-modal').style.display = 'flex';
         }
 
         function openReplay() {
