@@ -234,6 +234,20 @@
             cursor: not-allowed;
         }
 
+        #volume-panel {
+            position: absolute;
+            right: 15px;
+            bottom: 90px;
+            width: 350px;
+            background: rgba(20, 20, 20, 0.98);
+            border: 1px solid #444;
+            border-radius: 15px;
+            display: none;
+            flex-direction: column;
+            padding: 20px;
+            z-index: 1001;
+        }
+
         #settings-panel {
             position: absolute;
             right: 15px;
@@ -378,13 +392,14 @@
 
             <button onclick="togglePlayPause()">♪ Musiikki päälle/pois</button>
             <button onclick="toggleSettings()">≡ Soittolista</button>
+            <button onclick="toggleVolume()">🔊</button>
             <button onclick="showFirstTimeModal()">❓ Ohje</button>
             <button id="pin-btn" onclick="togglePin()">📌</button>
             
         </div>
     </div>
 
-    <div id="settings-panel">
+    <div id="volume-panel">
         <div style="margin-bottom:15px;">
             <label style="display:block; margin-bottom:5px; font-size:0.9rem;">♪ Musiikin äänenvoimakkuus</label>
             <input type="range" id="volume-slider" min="0" max="1" step="0.05" value="0.5" oninput="updateVolume()"
@@ -395,11 +410,14 @@
             <input type="range" id="beep-volume-slider" min="0" max="1" step="0.05" value="0.5"
                 oninput="updateBeepVolume()" style="width:100%;">
         </div>
+    </div>
+
+    <div id="settings-panel">
         <div style="display:flex; gap:10px;">
             <button onclick="shufflePlaylist()" style="flex:1;">🔀 Shuffle</button>
             <button onclick="fetchMusicList()" style="flex:1;">Päivitä</button>
         </div>
-        <div id="playlist-list" style="max-height:180px; overflow-y:auto; margin-top:15px; border-top:1px solid #444;">
+        <div id="playlist-list" style="max-height:220px; overflow-y:auto; margin-top:15px; border-top:1px solid #444;">
         </div>
     </div>
 
@@ -751,6 +769,7 @@
         function toggleOrder() { isOrderSwapped = !isOrderSwapped; updateDisplay(); saveAllSettings(); }
         function togglePin() { isPinned = !isPinned; document.getElementById('bottom-bar').classList.toggle('pinned', isPinned); document.getElementById('pin-btn').classList.toggle('active', isPinned); saveAllSettings(); }
         function toggleSettings() { const p = document.getElementById('settings-panel'); p.style.display = (p.style.display === 'flex') ? 'none' : 'flex'; }
+        function toggleVolume() { const p = document.getElementById('volume-panel'); p.style.display = (p.style.display === 'flex') ? 'none' : 'flex'; }
 
         function toggleClockHidden() {
             isClockHidden = !isClockHidden;
@@ -816,10 +835,16 @@
         }
 
         document.addEventListener('click', (event) => {
-            const panel = document.getElementById('settings-panel');
+            const settingsPanel = document.getElementById('settings-panel');
             const settingsBtn = document.querySelector('button[onclick="toggleSettings()"]');
-            if (panel.style.display === 'flex' && !panel.contains(event.target) && event.target !== settingsBtn) {
-                panel.style.display = 'none';
+            if (settingsPanel.style.display === 'flex' && !settingsPanel.contains(event.target) && event.target !== settingsBtn) {
+                settingsPanel.style.display = 'none';
+            }
+            
+            const volumePanel = document.getElementById('volume-panel');
+            const volumeBtn = document.querySelector('button[onclick="toggleVolume()"]');
+            if (volumePanel.style.display === 'flex' && !volumePanel.contains(event.target) && event.target !== volumeBtn) {
+                volumePanel.style.display = 'none';
             }
         });
 
