@@ -71,25 +71,27 @@
                     <option value="AB_CD">AB CD</option>
                 </select>
                 <button onclick="toggleOrder()">⇄ Vaihda vuoroa</button>
-            </div>
-            </div>
-
-            <div class="bottom-bar-group">
-
                 <button onclick="openReplay()" style="background: yellow; color: black;">⟳ Uusintanuoli</button>
+                <button id="emergency-stop-btn" onclick="toggleEmergencyStop()">Hätäpysäytys</button>
+            </div>
+            </div>
+
+            <div class="bottom-bar-group">
+
+                
 
             </div>
             <div class="bottom-bar-group">
-                <button id="emergency-stop-btn" onclick="toggleEmergencyStop()">Hätäpysäytys</button>
+                
 
             </div>
                     <div class="bottom-bar-right">
 
             
-            <button onclick="toggleSettings()">Musiikki</button>
-            <button onclick="toggleCombinedSettings()">Settings</button>
+            <button onclick="toggleSettings()">♪ Musiikki</button>
+            <button onclick="toggleCombinedSettings()">⚙️Asetukset</button>
             <button onclick="showFirstTimeModal()">❓ Ohje</button>
-            <button id="pin-btn" onclick="togglePin()">�</button>
+            <button id="pin-btn" onclick="togglePin()">📌</button>
             
         </div>
         </div>
