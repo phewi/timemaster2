@@ -105,13 +105,14 @@ section {
     font-variant-numeric: tabular-nums;
     text-align: center;
     display: inline-block;
+    transition: font-size 0.1s ease;
 }
 
 #bottom-section {
     position: absolute;
     bottom: 0;
     left: 0;
-    height: 25%;
+    height: 20%;
     justify-content: center;
     font-size: 22vh;
     z-index: 5;

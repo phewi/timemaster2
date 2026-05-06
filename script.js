@@ -19,13 +19,12 @@ function fitText() {
     if (isShooting) maxHFactor = 0.75;
     else if (isClockHidden) maxHFactor = 0.9;
     const maxHeight = window.innerHeight * maxHFactor;
-    const maxWidth = window.innerWidth * 0.9;
-    text.style.fontSize = '100px';
-    const optimalSize = 100 * Math.min(maxWidth / text.offsetWidth, maxHeight / text.offsetHeight);
-    text.style.fontSize = Math.floor(optimalSize) + 'px';
+    text.style.fontSize = (maxHeight * 1.0) + 'px';
 }
 
 window.addEventListener('resize', fitText);
+
+window.addEventListener('load', fitText);
 
 function saveAllSettings() {
     localStorage.setItem('tm2_final_config', JSON.stringify({
@@ -136,8 +135,6 @@ function updateDisplay() {
         midText.style.fontSize = '65vh';
         midText.style.lineHeight = '0.85';
     } else {
-        midText.style.fontSize = '';
-        midText.style.lineHeight = '';
         if (currentStep === 'IDLE') {
             topText.innerText = "";
             midText.innerText = (mode === 'AB_CD') ? (isOrderSwapped ? "CDAB" : "ABCD") : (mode === 'ABC' ? "ABC" : (mode === 'AB' ? "AB" : (isOrderSwapped ? "B A" : "A B")));
@@ -145,7 +142,6 @@ function updateDisplay() {
             midText.innerText = timeLeft.toString();
             topText.innerText = (mode === 'AB_CD') ? (currentStep.includes('P1') ? (isOrderSwapped ? "CD" : "AB") : (isOrderSwapped ? "AB" : "CD")) : (mode === 'ABC' ? "ABC" : (mode === 'AB' ? "AB" : (currentStep.includes('P1') ? (isOrderSwapped ? "B" : "A") : (isOrderSwapped ? "A" : "B"))));
         }
-        setTimeout(fitText, 0);
     }
 
     // Update button states
@@ -192,7 +188,8 @@ async function startPrep(p) {
     isMusicPlayingBeforePrep = musicToggleOn && !musicPlayer.paused;
     if (!musicPlayer.paused) musicPlayer.pause();
     currentStep = p === 1 ? 'P1_PREP' : 'P2_PREP';
-    timeLeft = 10; updateDisplay(); playBeeps(2);
+    timeLeft = 10; updateDisplay();
+    playBeeps(2);
     timerInterval = setInterval(() => { timeLeft--; if (timeLeft <= 0) startShooting(p); updateDisplay(); }, 1000);
 }
 
