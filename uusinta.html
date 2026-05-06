@@ -120,6 +120,15 @@
             updateLayoutClasses();
             if (!emergencyStop) {
                 const midText = document.getElementById('mid-section');
+                if (currentStep === 'SHOOT') {
+                    if (timeLeft <= 30) {
+                        document.body.classList.remove('mode-green');
+                        document.body.classList.add('mode-yellow');
+                    } else {
+                        document.body.classList.remove('mode-yellow');
+                        document.body.classList.add('mode-green');
+                    }
+                }
                 midText.innerText = (currentStep === 'IDLE') ? "ABCD" : timeLeft.toString();
             }
         }
